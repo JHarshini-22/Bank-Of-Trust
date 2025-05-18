@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  firstName String
+  lastName  String
+  password  String
+  phoneNumber String?
+  role      String   @default("customer") // customer, admin, teller, compliance_officer
+  status    String   @default("pending_verification") // active, inactive, suspended, pending_verification
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  accounts    Account[]
+  creditCards CreditCard[]
+  loans       Loan[]
+}
+
+model Account {
+  id            String   @id @default(uuid())
+  userId        String
+  accountNumber String   @unique
+  accountType   String   // checking, savings, joint, business, investment
+  balance       Float    @default(0)
+  currency      String   @default("USD")
+  status        String   @default("active") // active, inactive, suspended, closed
+  isDefault     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User     @relation(fields: [userId], references: [id])
+  
+  // Transaction references
+  incomingTransactions Transaction[] @relation("toAccount")
+  outgoingTransactions Transaction[] @relation("fromAccount")
+}
+
+model Transaction {
+  id            String   @id @default(uuid())
+  fromAccountId String?
+  toAccountId   String?
+  amount        Float
+  currency      String
+  type          String   // deposit, withdrawal, transfer, payment, fee, interest
+  status        String   @default("pending") // pending, completed, failed, cancelled
+  reference     String   @default(uuid())
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  fromAccount   Account? @relation("fromAccount", fields: [fromAccountId], references: [id])
+  toAccount     Account? @relation("toAccount", fields: [toAccountId], references: [id])
+  
+  // Optional category for analytics
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  color       String   @default("#6366F1") // Default color
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  transactions Transaction[]
+}
+
+model CreditCard {
+  id             String   @id @default(uuid())
+  userId         String
+  cardNumber     String   @unique
+  cardType       String
+  expiryDate     DateTime
+  creditLimit    Float
+  availableCredit Float
+  status         String   @default("active") // active, inactive, blocked, expired
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+model Loan {
+  id           String   @id @default(uuid())
+  userId       String
+  loanType     String   // personal, home, auto, education, business
+  amount       Float
+  interestRate Float
+  termMonths   Int
+  status       String   @default("pending") // pending, approved, rejected, active, closed, default
+  startDate    DateTime?
+  endDate      DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user         User     @relation(fields: [userId], references: [id])
+}

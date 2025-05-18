@@ -1,0 +1,64 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CreditCardStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+  EXPIRED
+}
+
+enum LoanType {
+  PERSONAL
+  HOME
+  AUTO
+  EDUCATION
+  BUSINESS
+}
+
+enum LoanStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ACTIVE
+  CLOSED
+  DEFAULT
+}
+
+model CreditCard {
+  id              String           @id @default(uuid())
+  userId          String
+  cardNumber      String           @unique
+  cardType        String
+  expiryDate      DateTime
+  creditLimit     Float
+  availableCredit Float
+  status          CreditCardStatus
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Loan {
+  id           String     @id @default(uuid())
+  userId       String
+  loanType     LoanType
+  amount       Float
+  interestRate Float
+  termMonths   Int
+  status       LoanStatus
+  startDate    DateTime
+  endDate      DateTime
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

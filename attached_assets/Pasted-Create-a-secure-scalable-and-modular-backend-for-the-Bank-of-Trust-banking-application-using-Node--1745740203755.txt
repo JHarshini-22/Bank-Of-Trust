@@ -1,0 +1,137 @@
+Create a secure, scalable, and modular backend for the Bank of Trust banking application using Node.js, leveraging a microservices architecture to support advanced financial services. The backend should be designed for high availability, compliance with banking regulations, and seamless integration of cutting-edge features like real-time analytics and biometric authentication. Below are the detailed specifications and requirements:
+
+### Project Overview
+- **Application Name**: Bank of Trust
+- **Purpose**: A next-generation digital banking platform offering robust financial services, including account management, payments, credit services, and advanced features like real-time spending analytics, biometric authentication, and regulatory compliance reporting.
+- **Tech Stack**:
+  - **Framework**: Nest.js with TypeScript for structured, modular microservices.
+  - **Database**:
+    - PostgreSQL for transactional data (accounts, transactions).
+    - MongoDB for non-relational data (user profiles, analytics).
+  - **ORM/ODM**: Prisma for PostgreSQL and Mongoose for MongoDB.
+  - **Authentication**: OAuth 2.0 with JWT for secure, federated authentication.
+  - **API**: RESTful APIs with GraphQL endpoints for complex queries, documented with Swagger.
+  - **Message Broker**: Kafka for inter-service communication and event-driven architecture.
+  - **Package Manager**: pnpm for efficient dependency management.
+
+### Core Functionalities (Microservices)
+1. **User Service**:
+   - User registration with biometric authentication (e.g., fingerprint or facial recognition via a third-party API).
+   - Secure login with OAuth 2.0, supporting SSO (Single Sign-On) with Google or Microsoft.
+   - KYC (Know Your Customer) verification with automated document scanning and validation.
+   - Role-based access control (e.g., customer, teller, compliance officer).
+
+2. **Account Service**:
+   - Create and manage multiple account types (e.g., checking, savings, joint accounts).
+   - Multi-currency support with real-time exchange rates (via an API like CurrencyLayer).
+   - Account balance updates with ACID-compliant transactions.
+
+3. **Transaction Service**:
+   - Real-time domestic and international transfers with SWIFT/IBAN support.
+   - Transaction validation with anti-money laundering (AML) checks.
+   - Event-driven transaction logging using Kafka for auditability.
+   - Support for instant payments via real-time gross settlement (RTGS) simulation.
+
+4. **Credit Service**:
+   - Credit card and loan applications with automated credit scoring.
+   - Repayment schedules with automated reminders and payment deductions.
+   - Overdraft protection with dynamic limit adjustments.
+
+5. **Analytics Service**:
+   - Real-time spending analytics with categorized transaction insights.
+   - Predictive budgeting tools using basic machine learning models.
+   - Compliance reporting for regulatory bodies (e.g., FATCA, CRS).
+
+### Advanced Functionalities
+- **Biometric Authentication**: Integrate a third-party biometric API (e.g., BioID or Veridium) for secure login and transaction approvals.
+- **Real-Time Notifications**: Push notifications, email, and SMS for account activities (using Firebase or AWS SNS).
+- **Regulatory Compliance**: Automated reporting for AML, KYC, and tax compliance (e.g., FATCA, GDPR).
+- **Fraud Prevention**: Machine learning-based anomaly detection for suspicious transactions or login attempts.
+- **Open Banking**: PSD2-compliant APIs for third-party integrations (e.g., account aggregation, payment initiation).
+
+### Security Requirements
+- Enforce HTTPS with TLS 1.3 for all communications.
+- Implement API gateway (e.g., Kong or AWS API Gateway) for centralized authentication and rate limiting.
+- Encrypt sensitive data at rest (AES-256) and in transit.
+- Comply with PCI-DSS, GDPR, and ISO 27001 standards.
+- Use secret management (e.g., AWS Secrets Manager) for sensitive configurations.
+
+### Performance and Scalability
+- Design microservices for independent scaling using Kubernetes and Docker.
+- Use Kafka for asynchronous, high-throughput inter-service communication.
+- Implement Redis for caching (e.g., user sessions, exchange rates).
+- Optimize database performance with indexing, sharding (MongoDB), and read replicas (PostgreSQL).
+- Ensure 99.99% uptime with circuit breakers and retries for service failures.
+
+### Development Guidelines
+- Follow microservices best practices (e.g., single responsibility, loose coupling).
+- Write unit, integration, and end-to-end tests using Jest with 90% code coverage.
+- Use Git for version control with a branching strategy (e.g., GitFlow).
+- Provide Swagger and GraphQL schema documentation for APIs.
+- Include a detailed README with setup, testing, and deployment instructions for each microservice.
+
+### Sample API Endpoints
+- `POST /user/register`: Create a new user with KYC and biometric data.
+- `POST /auth/token`: Issue OAuth 2.0 access and refresh tokens.
+- `GET /accounts/:userId`: Retrieve user’s accounts (REST or GraphQL).
+- `POST /transactions/transfer`: Initiate a real-time transfer.
+- `GET /analytics/spending/:userId`: Fetch real-time spending insights.
+- `POST /compliance/report`: Generate regulatory compliance report.
+
+### External Integrations
+- **Payment Gateway**: Integrate with Adyen or Worldpay for card and instant payments.
+- **Biometric API**: Use BioID or similar for biometric authentication.
+- **Exchange Rates**: Fetch rates via CurrencyLayer or Fixer.io.
+- **Compliance**: Integrate with ComplyAdvantage for AML and KYC checks.
+- **Notifications**: Use AWS SNS or Firebase for multi-channel notifications.
+
+### Deliverables
+- A set of Node.js microservices implementing all specified functionalities.
+- Database schemas for PostgreSQL (Prisma) and MongoDB (Mongoose).
+- Comprehensive Swagger and GraphQL documentation.
+- Unit, integration, and end-to-end tests for each microservice.
+- Dockerfiles and Kubernetes manifests for deployment.
+- A detailed README with setup, testing, and deployment instructions.
+
+### Constraints
+- Ensure compliance with GDPR, PCI-DSS, and PSD2 regulations.
+- Minimize service interdependencies to maintain microservices autonomy.
+- Handle edge cases like transaction rollbacks, service outages, or duplicate requests.
+
+### Example Directory Structure
+```
+bank-of-trust-backend/
+├── services/
+│   ├── user-service/
+│   │   ├── src/
+│   │   │   ├── controllers/
+│   │   │   ├── services/
+│   │   │   ├── main.ts
+│   │   ├── tests/
+│   │   ├── Dockerfile
+│   │   ├── package.json
+│   ├── account-service/
+│   ├── transaction-service/
+│   ├── credit-service/
+│   ├── analytics-service/
+├── api-gateway/
+│   ├── src/
+│   │   ├── routes/
+│   │   ├── main.ts
+│   ├── Dockerfile
+├── kubernetes/
+│   ├── user-deployment.yaml
+│   ├── transaction-service.yaml
+├── .env.example
+├── docker-compose.yml
+├── README.md
+```
+
+### Success Criteria
+- The backend supports all core and advanced functionalities with high reliability.
+- API response times are under 100ms for 95% of requests under load.
+- The system handles 20,000 concurrent users with zero downtime.
+- Security and compliance audits confirm adherence to banking standards.
+- The codebase is modular, well-documented, and deployable to a cloud environment (e.g., GCP, Azure).
+
+Please provide the complete source code, configuration files, and deployment scripts for the Bank of Trust backend, adhering to the above requirements. Ensure the solution is production-ready, optimized for performance, and follows industry best practices for banking applications using a microservices architecture.
